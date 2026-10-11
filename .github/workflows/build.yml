@@ -25,6 +25,9 @@ jobs:
       - name: Install ststm32 platform
         run: pio platform install ststm32
 
+      - name: Warm up PlatformIO to fetch framework
+        run: pio run -e ac_tri_f1 || true
+
       - name: Copy custom variant files
         run: |
           git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
