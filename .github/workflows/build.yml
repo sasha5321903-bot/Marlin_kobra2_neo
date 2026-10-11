@@ -24,40 +24,19 @@ jobs:
       - name: Install ststm32 platform
         run: pio platform install ststm32
 
-      - name: Copy custom variant files
+      - name: Clone custom framework and variant
         run: |
-          # Находим папку фреймворка
-          FRAMEWORK_DIR=$(find ~/.platformio/packages -maxdepth 1 -type d -name "framework-arduinoststm32*" | head -n 1)
-          echo "=== Framework directory: $FRAMEWORK_DIR ==="
-          if [ -z "$FRAMEWORK_DIR" ]; then
-            echo "Framework not found! Listing packages:"
-            ls -la ~/.platformio/packages/
-            exit 1
-          fi
+          # Клонируем кастомный фреймворк прямо в папку пакетов PlatformIO
+          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git ~/.platformio/packages/framework-arduinoststm32
           
-          # Клонируем кастомный репозиторий
-          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
+          # Проверяем, что папка с вариантом существует
+          ls -la ~/.platformio/packages/framework-arduinoststm32/variants/AC_TRI_F103RE/
           
-          # Находим папку с вариантом (только внутри variants)
-          CUSTOM_VARIANT=$(find temp_board -type d -path "*/variants/AC_TRI_F103RE" | head -n 1)
-          echo "=== Custom variant found at: $CUSTOM_VARIANT ==="
-          if [ -z "$CUSTOM_VARIANT" ]; then
-            echo "Custom variant not found! Listing temp_board:"
-            find temp_board -type d -name "AC_TRI_F103RE"
-            exit 1
-          fi
-          ls -la $CUSTOM_VARIANT/
-          
-          # Копируем файлы в фреймворк
-          mkdir -p $FRAMEWORK_DIR/variants/AC_TRI_F103RE
-          cp -r $CUSTOM_VARIANT/* $FRAMEWORK_DIR/variants/AC_TRI_F103RE/
-          
-          # Создаём файл с нужным именем
-          cd $FRAMEWORK_DIR/variants/AC_TRI_F103RE
+          # Создаём файл с нужным именем, который ищет компилятор
+          cd ~/.platformio/packages/framework-arduinoststm32/variants/AC_TRI_F103RE
           cp variant.h variant_AC_TRI_F103RE.h
           cp variant.cpp variant_AC_TRI_F103RE.cpp
-          
-          echo "=== Final contents of variant folder ==="
+          echo "=== Содержимое папки варианта ==="
           ls -la
           cd $GITHUB_WORKSPACE
 
