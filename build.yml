@@ -20,6 +20,17 @@ jobs:
       - name: Install PlatformIO
         run: pip install platformio
 
+      - name: Download board files
+        run: |
+          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
+          mkdir -p ~/.platformio/packages
+          mv temp_board ~/.platformio/packages/framework-arduinoststm32
+          mkdir -p ~/.platformio/platforms/ststm32/boards
+          cp ~/.platformio/packages/framework-arduinoststm32/ac_tri_f103re.json ~/.platformio/platforms/ststm32/boards/
+          echo "=== Проверка файлов платы ==="
+          ls -la ~/.platformio/platforms/ststm32/boards/
+          ls -la ~/.platformio/packages/framework-arduinoststm32/variants/
+
       - name: Build firmware
         run: pio run -e ac_tri_f1
 
