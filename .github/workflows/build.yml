@@ -22,8 +22,8 @@ jobs:
       - name: Install PlatformIO
         run: pip install platformio
 
-      - name: Install ststm32 platform and Arduino framework
-        run: pio pkg install --global --platform ststm32 --framework arduino
+      - name: Install ststm32 platform
+        run: pio platform install ststm32
 
       - name: Copy custom variant files
         run: |
@@ -35,14 +35,8 @@ jobs:
           echo "Framework directory: $FRAMEWORK_DIR"
           
           if [ -z "$FRAMEWORK_DIR" ]; then
-            echo "Framework directory not found! Installing..."
-            pio pkg install --global --platform ststm32 --framework arduino
-            FRAMEWORK_DIR=$(find ~/.platformio/packages -maxdepth 1 -type d -name "framework-arduinoststm32*" | head -n 1)
-            echo "Framework directory after install: $FRAMEWORK_DIR"
-          fi
-          
-          if [ -z "$FRAMEWORK_DIR" ]; then
-            echo "Still not found. Exiting."
+            echo "Framework directory not found, listing packages:"
+            ls -la ~/.platformio/packages/
             exit 1
           fi
           
@@ -50,7 +44,6 @@ jobs:
           mkdir -p $VARIANTS_DIR
           cp -r $CUSTOM_VARIANT $VARIANTS_DIR/
           
-          # Переименовываем файлы, как ожидает ядро
           cd $VARIANTS_DIR/AC_TRI_F103RE
           cp variant.h variant_AC_TRI_F103RE.h
           cp variant.cpp variant_AC_TRI_F103RE.cpp
