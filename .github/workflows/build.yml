@@ -1,3 +1,4 @@
+
 name: Build Marlin
 
 on:
@@ -19,6 +20,20 @@ jobs:
 
       - name: Install PlatformIO
         run: pip install platformio
+
+      - name: Install ststm32 platform
+        run: pio platform install ststm32
+
+      - name: Copy custom variant files
+        run: |
+          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
+          CUSTOM_VARIANT=$(find temp_board -type d -name "AC_TRI_F103RE" | head -n 1)
+          FRAMEWORK_DIR=$(find ~/.platformio/packages -maxdepth 1 -type d -name "framework-arduinoststm32*" | head -n 1)
+          mkdir -p $FRAMEWORK_DIR/variants
+          cp -r $CUSTOM_VARIANT $FRAMEWORK_DIR/variants/
+          echo "=== Проверка ==="
+          ls -la $FRAMEWORK_DIR/variants/AC_TRI_F103RE/
+          rm -rf temp_board
 
       - name: Build firmware
         run: pio run -e ac_tri_f1
