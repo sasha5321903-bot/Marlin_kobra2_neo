@@ -28,7 +28,7 @@
     "protocols": [
       "blackmagic",
       "dfu",
-      "jlink",
+    
       "stlink"
     ]
   },
