@@ -1,0 +1,37 @@
+{
+  "build": {
+    "core": "stm32",
+    "cpu": "cortex-m3",
+    "extra_flags": "-DSTM32F103xE -DSTM32F103RE",
+    "f_cpu": "72000000L",
+    "framework_extra_flags": {
+      "arduino": "-DCUSTOM_VARIANT"
+    },
+    "mcu": "stm32f103ret6",
+    "variant": "AC_TRI_F103RE"
+  },
+  "debug": {
+    "default_tool": "stlink",
+    "onboard_tools": [
+      "stlink"
+    ],
+    "openocd_target": "stm32f1x"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "Anycubic Trigorilla F103RE",
+  "upload": {
+    "maximum_ram_size": 65536,
+    "maximum_size": 524288,
+    "protocol": "stlink",
+    "protocols": [
+      "blackmagic",
+      "dfu",
+      "jlink",
+      "stlink"
+    ]
+  },
+  "url": "https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board",
+  "vendor": "Anycubic"
+}
