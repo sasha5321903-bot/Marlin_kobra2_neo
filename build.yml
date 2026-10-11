@@ -1,4 +1,5 @@
 
+
 name: Build Marlin
 
 on:
@@ -21,10 +22,25 @@ jobs:
       - name: Install PlatformIO
         run: pip install platformio
 
-      - name: Fetch custom board definition
+      - name: Install ststm32 platform
+        run: pio platform install ststm32
+
+      - name: Patch generic variant with custom files
         run: |
           git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
-          cp temp_board/ac_tri_f103re.json .
+          # Находим папку с кастомным вариантом
+          CUSTOM_VARIANT=$(find temp_board -type d -name "AC_TRI_F103RE" | head -n 1)
+          echo "Custom variant found at: $CUSTOM_VARIANT"
+          # Находим папку со стандартным (generic) вариантом в PlatformIO
+          TARGET_VARIANT=$(find ~/.platformio/packages/framework-arduinoststm32/variants -name "variant_generic.h" -exec dirname {} \; | head -n 1)
+          echo "Target generic variant found at: $TARGET_VARIANT"
+          # Копируем кастомные файлы в папку со стандартными
+          cp $CUSTOM_VARIANT/* $TARGET_VARIANT/
+          # Переименовываем кастомные файлы в те имена, которые ожидает компилятор
+          mv $TARGET_VARIANT/variant.h $TARGET_VARIANT/variant_generic.h
+          mv $TARGET_VARIANT/variant.cpp $TARGET_VARIANT/variant_generic.cpp
+          echo "=== Проверка после замены ==="
+          ls -la $TARGET_VARIANT/
           rm -rf temp_board
 
       - name: Build firmware
