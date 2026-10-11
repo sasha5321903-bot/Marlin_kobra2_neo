@@ -25,32 +25,12 @@ jobs:
       - name: Install ststm32 platform
         run: pio platform install ststm32
 
-      - name: Warm up PlatformIO to fetch framework
-        run: pio run -e ac_tri_f1 || true
-
-      - name: Copy custom variant files
+      - name: Install custom framework and variant
         run: |
-          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git temp_board
-          CUSTOM_VARIANT=$(find temp_board -type d -name "AC_TRI_F103RE" | head -n 1)
-          echo "Custom variant found at: $CUSTOM_VARIANT"
-          
-          FRAMEWORK_DIR=$(find ~/.platformio/packages -maxdepth 1 -type d -name "framework-arduinoststm32*" | head -n 1)
-          echo "Framework directory: $FRAMEWORK_DIR"
-          
-          if [ -z "$FRAMEWORK_DIR" ]; then
-            echo "Framework directory not found, listing packages:"
-            ls -la ~/.platformio/packages/
-            exit 1
-          fi
-          
-          VARIANTS_DIR="$FRAMEWORK_DIR/variants"
-          mkdir -p $VARIANTS_DIR
-          cp -r $CUSTOM_VARIANT $VARIANTS_DIR/
-          
-          cd $VARIANTS_DIR/AC_TRI_F103RE
+          git clone https://github.com/DKuba4/framework-arduinoststm32_kobra2_neo_board.git ~/.platformio/packages/framework-arduinoststm32
+          cd ~/.platformio/packages/framework-arduinoststm32/variants/AC_TRI_F103RE
           cp variant.h variant_AC_TRI_F103RE.h
           cp variant.cpp variant_AC_TRI_F103RE.cpp
-          
           echo "=== Содержимое папки варианта ==="
           ls -la
           cd $GITHUB_WORKSPACE
